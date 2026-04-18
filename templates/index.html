@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart Result Checker - BISE Sahiwal</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    min-height: 100vh;
+    padding: 20px;
+}
+.container { max-width: 500px; margin: 0 auto; }
+.card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+h1 { color: white; text-align: center; margin-bottom: 10px; font-size: 28px; }
+.subtitle { text-align: center; color: #ccc; font-size: 14px; margin-bottom: 20px; }
+.info-box {
+    background: rgba(0, 198, 255, 0.2);
+    border: 1px solid #00c6ff;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #00c6ff;
+    text-align: center;
+}
+.speed-badge, .smart-badge {
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    display: inline-block;
+    margin-left: 5px;
+}
+.smart-badge { background: #28a745; color: white; }
+.speed-badge { background: #ffc107; color: #000; }
+select, input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+}
+button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.2s;
+}
+button:hover:not(:disabled) { transform: translateY(-2px); }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+.status-card {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    padding: 20px;
+}
+.status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+.status-waiting_for_result { background: #ffc107; color: #000; animation: pulse 2s infinite; }
+.status-checking { background: #17a2b8; color: white; animation: pulse 0.5s infinite; }
+.status-completed { background: #28a745; color: white; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+.attempt-counter { font-size: 24px; font-weight: bold; color: #00c6ff; }
+.stats {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    font-size: 12px;
+}
+.stat-item { text-align: center; }
+.stat-value { font-size: 18px; font-weight: bold; color: #00c6ff; }
+.result-item {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    animation: fadeIn 0.3s;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.subject-name { font-weight: bold; color: #00c6ff; margin-bottom: 5px; }
+.marks-detail { font-size: 13px; color: #ccc; }
+.total-marks {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 15px;
+    font-size: 18px;
+}
+.stop-btn { background: #dc3545; margin-top: 10px; }
+.stop-btn:hover { background: #c82333; }
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.6s linear infinite;
+    margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.waiting-animation { text-align: center; padding: 20px; }
+.waiting-icon { font-size: 48px; animation: bounce 1s infinite; }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+footer {
+    margin-top: 30px;
+    padding: 20px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1>🎯 Smart Result Checker</h1>
+        <div class="subtitle">
+            BISE Sahiwal
+            <span class="smart-badge">🧠 Smart Wait</span>
+            <span class="speed-badge">⚡ 1-2 sec</span>
+        </div>
+        <div class="info-box">
+            🧠 <strong>Smart Auto-Checker</strong><br>
+            Phase 1: Result upload hone ka intezaar karega<br>
+            Phase 2: Upload hotey hi <strong>har 1-2 second</strong> mein check karega!
+        </div>
+        <select id="class">
+            <option>9th</option>
+            <option>10th</option>
+        </select>
+        <select id="year">
+            <option>2026</option>
+            <option>2025</option>
+            <option>2024</option>
+        </select>
+        <input type="text" id="roll" placeholder="Enter 6-digit Roll Number" maxlength="6">
+        <button onclick="startAutoCheck()" id="startBtn">🎯 Start Smart Checker</button>
+    </div>
+    <div id="statusContainer"></div>
+    <footer>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <div style="font-size: 14px; font-weight: bold; color: #888; letter-spacing: 2px;">CREATED BY</div>
+            <div style="font-size: 20px; font-weight: bold; background: linear-gradient(135deg, #00c6ff, #0072ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 1px;">MUHAMMAD ABDULLAH</div>
+            <div style="width: 50px; height: 2px; background: linear-gradient(90deg, #00c6ff, #0072ff); margin: 5px 0; border-radius: 2px;"></div>
+            <div style="font-size: 11px; color: #666; margin-top: 5px;">© 2026 BISE Sahiwal Result Checker</div>
+        </div>
+    </footer>
+</div>
+<script>
+let currentJobId = null;
+let statusInterval = null;
+
+async function startAutoCheck() {
+    const roll = document.getElementById('roll').value.trim();
+    const cls = document.getElementById('class').value;
+    const year = document.getElementById('year').value;
+    
+    if (!roll) { alert('Please enter roll number'); return; }
+    if (!/^\d{6}$/.test(roll)) { alert('Roll number must be 6 digits'); return; }
+    
+    const startBtn = document.getElementById('startBtn');
+    startBtn.disabled = true;
+    startBtn.innerHTML = '<span class="loading-spinner"></span> Starting Smart Checker...';
+    
+    try {
+        const response = await fetch('/start-auto-check', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({roll, class: cls, year})
+        });
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            alert('Error: ' + data.error);
+            startBtn.disabled = false;
+            startBtn.innerHTML = '🎯 Start Smart Checker';
+            return;
+        }
+        
+        currentJobId = data.job_id;
+        startBtn.innerHTML = '🧠 Smart Checker Active...';
+        
+        if (statusInterval) clearInterval(statusInterval);
+        statusInterval = setInterval(checkStatus, 1000);
+        
+    } catch (error) {
+        alert('Network error: ' + error.message);
+        startBtn.disabled = false;
+        startBtn.innerHTML = '🎯 Start Smart Checker';
+    }
+}
+
+async function checkStatus() {
+    if (!currentJobId) return;
+    
+    try {
+        const response = await fetch(`/check-status/${currentJobId}`);
+        const data = await response.json();
+        updateStatusUI(data);
+        
+        if (data.status === 'completed') {
+            clearInterval(statusInterval);
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('startBtn').innerHTML = '🎯 Start Smart Checker';
+            setTimeout(() => { alert('🎉 RESULT FOUND! 🎉\n\nYour result has been displayed above!'); }, 500);
+        }
+    } catch (error) { console.error('Status check error:', error); }
+}
+
+function updateStatusUI(data) {
+    const container = document.getElementById('statusContainer');
+    let statusText = '', statusIcon = '', statusColor = '';
+    
+    if (data.status === 'waiting_for_result') { statusText = '⏳ WAITING FOR RESULT UPLOAD'; statusIcon = '📡'; statusColor = '#ffc107'; }
+    else if (data.status === 'checking') { statusText = '⚡ FAST CHECKING ACTIVE'; statusIcon = '⚡'; statusColor = '#17a2b8'; }
+    else if (data.status === 'completed') { statusText = '✅ RESULT FOUND!'; statusIcon = '🎉'; statusColor = '#28a745'; }
+    
+    let html = `<div class="status-card"><div class="status-header"><span class="status-badge status-${data.status}" style="background: ${statusColor}">${statusIcon} ${statusText}</span>${data.status === 'checking' ? `<span class="attempt-counter">#${data.attempts}</span>` : ''}</div>`;
+    
+    if (data.status === 'waiting_for_result') {
+        html += `<div class="waiting-animation"><div class="waiting-icon">⏰</div><p><strong>${data.message || 'Waiting for result upload...'}</strong></p><p style="font-size: 12px; margin-top: 10px;">⏱️ Time: ${data.elapsed_time}<br>🔄 Checking every 30 seconds<br>📅 Result upload hote hi automatic fast checking start ho jayega!</p><button class="stop-btn" onclick="stopAutoCheck()">⛔ Stop Waiting</button></div>`;
+    } else if (data.status === 'checking') {
+        html += `<div class="stats"><div class="stat-item"><div class="stat-value">${data.attempts}</div><div>Attempts</div></div><div class="stat-item"><div class="stat-value">${data.elapsed_time}</div><div>Time</div></div><div class="stat-item"><div class="stat-value">1-2s</div><div>Delay</div></div></div><div style="text-align: center; padding: 20px;"><div style="font-size: 48px; margin-bottom: 10px;">⚡</div><p><strong>FAST CHECKING ACTIVE!</strong></p><p style="font-size: 12px;">${data.message || 'Checking...'}</p><button class="stop-btn" onclick="stopAutoCheck()">⛔ Stop Checking</button></div>`;
+    } else if (data.status === 'completed' && data.result) {
+        const result = data.result;
+        html += `<div style="margin-top: 10px;">`;
+        if (result.results) {
+            result.results.forEach((item, idx) => {
+                if (item.marks !== undefined) {
+                    html += `<div class="result-item"><div class="subject-name">📚 ${item.subject}</div><div class="marks-detail">Marks: ${item.marks}</div></div>`;
+                } else {
+                    html += `<div class="result-item"><div class="subject-name">📚 ${item.subject}</div><div class="marks-detail">${item.class9 > 0 ? `9th: ${item.class9} | ` : ''}${item.class10 > 0 ? `10th: ${item.class10} | ` : ''}${item.practical > 0 ? `Practical: ${item.practical}` : ''}</div></div>`;
+                }
+            });
+        }
+        if (result.total) { html += `<div class="total-marks">📊 TOTAL: ${result.total}</div>`; }
+        html += `<div style="margin-top: 10px; text-align: center; font-size: 12px; color: #28a745;">✅ Result found after ${result.attempts} attempts!</div></div>`;
+    }
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+async function stopAutoCheck() {
+    if (!currentJobId) return;
+    if (confirm('Stop auto-checking?')) {
+        await fetch(`/stop-check/${currentJobId}`, {method: 'POST'});
+        clearInterval(statusInterval);
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('startBtn').innerHTML = '🎯 Start Smart Checker';
+        document.getElementById('statusContainer').innerHTML = '';
+        currentJobId = null;
+    }
+}
+</script>
+</body>
+</html>
